@@ -1,0 +1,277 @@
+@Entity
+@Table(name="scheduler_details")
+public class Scheduler {
+	@Id
+	@Column(name="scheduler_id")
+	private String schedulerId;
+	
+	@Column(name="scheduler_Name", nullable=false)
+	private String schedulerName;
+	
+	@Column(name="scheduler_contact", nullable=false)
+	private String schedulerContact;
+
+	@Column(name="truck_number", nullable=false)
+	private String truckNumber;
+	
+	@OneToMany(mappedBy="scheduler_details")
+	private Set<Order> order;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="contract_number")
+	private Contract contract;
+	
+------------------------------------------------------------------
+@Entity
+@Table(name="order_details")
+public class Order {
+	@Id
+	@Column(name="order_number")
+	private String orderNumber;
+
+	@Column(name="delivery_place")
+	private String deliveryPlace;
+
+	@Column(name="delivery_date")
+	private String deliveryDate;
+
+	@Column(name="quantity")
+	private String quantity;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="scheduler_number")
+	private Scheduler scheduler;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="customer_id")
+	private Customer customer;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="order_number")
+	private Contract contract;
+
+	
+	@OneToMany(mappedBy="order_details")
+	private Set<Product> product;
+
+----------------------------------------------------------
+@Entity
+@Table(name="customer_details")
+public class Customer {
+	@Id
+	@Column(name="customer_id")
+	private String customerId;
+	
+	@Column(name="customer_name")
+	private String customerName;
+
+	@Column(name="customer_password")
+	private String customerPassword;
+
+	@Column(name="customer_email")
+	private String customerEmail;
+	
+	@Column(name="customer_address")
+	private String customerAddress;
+
+	@Column(name="customer_town")
+	private String customerTown;	
+
+	@Column(name="customer_postal_code")
+	private String customerPostalCode;
+
+	@OneToMany(mappedBy="customer_details")
+	private Set<Contract> contract;
+
+	@OneToMany(mappedBy="customer_details")
+	private Set<Order> order;
+
+
+----------------------------------------------------------
+@Entity
+@Table(name="contract_details")
+public class Contract {
+	@Id
+	@Column(name="contract_number")
+	private String contractnumber;
+	
+	@Column(name="delivery_place")
+	private String deliveryPlace;
+
+	@Column(name="delivery_date")
+	private String deliveryDate;
+
+	@Column(name="quantity")
+	private String quantity;
+
+	
+	@OneToMany(mappedBy="contract_details")
+	private Set<Product> product;
+
+	
+	@OneToMany(mappedBy="contract_details")
+	private Set<Scheduler> scheduler;
+
+	
+	@OneToMany(mappedBy="contract_details")
+	private Set<Order> order;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="customer_id")
+	private Customer customer;
+
+--------------------------------------------------------
+@Entity
+@Table(name="product_details")
+public class Product{
+	@Id
+	@Column(name="product_id")
+	private String productId;
+
+	@Column(name="product_name")
+	private String productName;
+
+	@Column(name="product_description")
+	private String productDescription;
+
+	@Column(name="product_quantity")
+	private String productQuantity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="contract_number")
+	private Contract contract;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="order_number")
+	private Order order;
+
+-----------------------------------------------------
+@Entity
+@Table(name="admin_details")
+public class Admin{
+	@Id
+	@Column(name="admin_id")
+	private String adminid;
+	
+	@Column(name="admin_name")
+	private String adminName;
+
+	@Column(name="admin_password")
+	private String adminPassword;
+}
+
+-------------------------------------------------------
+@Entity
+@Table(name="land_details")
+public class Land{
+	@Id
+	@Column(name="land_id")
+	private String landId;
+
+	@Column(name="survey_number")
+	private String surveyNumber;
+
+	@Column(name"owner_name")
+	private String ownerName;
+
+	@Column(name="land_area")
+	private String landArea;
+}
+
+------------------------------------------------------------
+order table
+--------------
+CREATE TABLE order_details
+( ordernumber  varchar(20) CONSTRAINT order_ordernumber_pk PRIMARY KEY, 
+deliveryplace  varchar(20) CONSTRAINT order_deliveryplace_nn  NOT NULL,
+deliverydate  date,
+quality varchar(20),
+schedulerid varchar(20) CONSTRAINT order_schedulerid_fk REFERENCES schedulers_details(schedulerid),
+customerid varchar(20) CONSTRAINT order_customerid_fk REFERENCES customers_details(customerid)
+);
+
+INSERT INTO order_details VALUES('11','kolkata','2020-11-24','100',1,13);
+INSERT INTO order_details VALUES('13','2020-11-25','chennai','101',2,14);
+INSERT INTO order_details VALUES('14','2020-11-26','mumbai','102',2,16);
+INSERT INTO order_details VALUES('17','2020-11-27','delhi','103',3,17);
+INSERT INTO order_details VALUES('18','2020-11-29','bihar','105',4,18);
+INSERT INTO order_details VALUES('20','2019-10-19','andra pradesh','10',5,19);
+INSERT INTO order_details VALUES('21','2017-02-11','sikkim','115',6,9);
+
+------------------------------------------------------------------
+product table
+---------------
+CREATE TABLE product_details
+(productid varchar(20) CONSTRAINT product_productid_pk PRIMARY KEY,
+productname varchar(20),
+productdescription varchar(20),
+productquantity varchar(20)
+);
+
+
+INSERT INTO product_details VALUES('12','best timber wood','timber wood','100',8,11);
+INSERT INTO product_details VALUES('14','best wood ever',' wood','110',9,13);
+INSERT INTO product_details VALUES('16','fruits','banana','50',10,14);
+INSERT INTO product_details VALUES('17','vegetables','ladyfinger','500',8,17);
+INSERT INTO product_details VALUES('21','wood','timber','100',11,18);
+INSERT INTO product_details VALUES('23','best wood','timber wood','250',12,20);
+INSERT INTO product_details VALUES('25','quality wood','timber wood','300',13,21);
+
+-------------------------------------------------------------------
+scheduler table
+--------------------
+CREATE TABLE scheduler_details
+(schedulerid varchar(20) CONSTRAINT scheduler_schedulerid_pk PRIMARY KEY,
+schedulername varchar(20),
+schedulercontract varchar(20),
+schedulernumber varchar(20)
+);	
+
+INSERT INTO scheduler_details VALUES('13','paresh','9876541234','mh-A-1002');
+INSERT INTO scheduler_details VALUES('14','prasanth','9876541243','jh-ag-111');
+INSERT INTO scheduler_details VALUES('16','r sai krishna','9876541432','up-hgh-10000');
+INSERT INTO scheduler_details VALUES('17','sai tarun','9876541765','dl-ke-1112');
+INSERT INTO scheduler_details VALUES('18','avinash','9876541345','ap-A-1222');
+INSERT INTO scheduler_details VALUES('19','bhargava','9876541234','tn-af-102');
+INSERT INTO scheduler_details VALUES('20','abhishek','9876512345','bh-A-112');
+----------------------------------------------------------------------
+contract table
+---------------------
+CREATE TABLE contract_details
+(contractnumber varchar(20) CONSTRAINT contract_contractnumber_pk PRIMARY KEY,
+deliveryplace varchar(20),
+deliverydate date,
+quality varchar(20),
+schedulerid varchar(20) CONSTRAINT contract_schedulerid_fk REFERENCES schedulers_details(schedulerid),
+productid varchar(20) CONSTRAINT contract_productid_fk REFERENCES products_details(productid),
+ordernumber varchar(20) CONSTRAINT scheduler_ordernumber_fk REFERENCES order_details(ordernumber)
+);
+
+INSERT INTO contract_details VALUES('8','2020-12-15','chennai','20',1,13);
+INSERT INTO contract_details VALUES('9','2020-12-25','kolkata','40',2,14);
+INSERT INTO contract_details VALUES('10','2020-10-20','pune','60',3,16);
+INSERT INTO contract_details VALUES('11','2020-10-23','punjab','70',4,17);
+INSERT INTO contract_details VALUES('12','2019-09-23','bihar','10',2,18);
+INSERT INTO contract_details VALUES('13','2017-07-19','rajsthan','30',6,9);
+INSERT INTO contract_details VALUES('14','2017-06-13','haryana','13',5,19);
+-----------------------------------------------------------------------
+customer table
+---------------
+CREATE TABLE customer_details
+(customerid varchar(20) CONSTRAINT customer_customerid_pk PRIMARY KEY,
+customerpassword varchar(20),
+customername varchar(20),
+customeremail varchar(20),
+customeraddress varchar(20),
+customertown varchar(20),
+customerpostalcode varchar(20)
+);
+
+INSERT INTO customer_details VALUES('1','street 101','bhargava@gmail.com','bhargava','123409835','600062','chennai','9876436322');
+INSERT INTO customer_details VALUES('2','street 102','paresh@gmail.com','paresh','12340983','600061','pune','9876436321');
+INSERT INTO customer_details VALUES('3','street 103','avinash@gmail.com','avinash','12340935','600262','vizag','9876436323');
+INSERT INTO customer_details VALUES('4','street 104','abhi@gmail.com','abhi','12340835','600032','banglore','9876436324');
+INSERT INTO customer_details VALUES('5','street 105','prashanth@gmail.com','prashanth','13409835','400062','delhi','9876436325');
+INSERT INTO customer_details VALUES('6','street 106','tarun@gmail.com','tarun','12349835','600462','hyderabad','9876436326');
+INSERT INTO customer_details VALUES('7','street 107','saikrishna@gmail.com','saikrishna','12409835','660062','goa','9876436327');
+
