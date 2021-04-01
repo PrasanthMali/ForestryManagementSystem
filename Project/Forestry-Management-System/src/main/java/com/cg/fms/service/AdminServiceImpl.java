@@ -113,18 +113,4 @@ public class AdminServiceImpl implements IAdminService {
 		}
 		return adminModel;
 	}
-
-
-
-
-
-
-	
-
-	
-
-
-
-	
-
 }

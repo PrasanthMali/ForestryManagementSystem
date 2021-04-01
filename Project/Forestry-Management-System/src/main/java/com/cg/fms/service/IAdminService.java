@@ -16,14 +16,4 @@ public interface IAdminService {
 	public List<AdminModel> getAllAdmins()throws AdminException;
 
 	public AdminModel updateAdmin(String adminId, AdminModel admin) throws AdminException;
-
-
-
-
-
-
-
-	
-
-	
 }
