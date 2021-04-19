@@ -227,7 +227,7 @@ schedulercontract varchar(20),
 schedulernumber varchar(20)
 );	
 
-INSERT INTO scheduler_details VALUES('13','paresh','9876541234','mh-A-1002');
+INSERT INTO scheduler_details VALUES('FSI01','9876541234','Sai Krishna','mh-A-1002');
 INSERT INTO scheduler_details VALUES('14','prasanth','9876541243','jh-ag-111');
 INSERT INTO scheduler_details VALUES('16','r sai krishna','9876541432','up-hgh-10000');
 INSERT INTO scheduler_details VALUES('17','sai tarun','9876541765','dl-ke-1112');
@@ -267,7 +267,7 @@ customertown varchar(20),
 customerpostalcode varchar(20)
 );
 
-INSERT INTO customer_details VALUES('1','street 101','bhargava@gmail.com','bhargava','123409835','600062','chennai','9876436322');
+INSERT INTO customer_details VALUES('FCI01','street 101','8500087861','prasanth@gmail.com','Prasanth','123409835','600062','chennai');
 INSERT INTO customer_details VALUES('2','street 102','paresh@gmail.com','paresh','12340983','600061','pune','9876436321');
 INSERT INTO customer_details VALUES('3','street 103','avinash@gmail.com','avinash','12340935','600262','vizag','9876436323');
 INSERT INTO customer_details VALUES('4','street 104','abhi@gmail.com','abhi','12340835','600032','banglore','9876436324');
