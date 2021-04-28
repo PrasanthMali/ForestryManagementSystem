@@ -153,19 +153,18 @@ public class UserServiceImpl implements IUserService {
 	}
 	
 	@Override
-	public UserModel signUp(SignUp signUp) throws UserException {
-		if(signUp==null) {
+	public UserModel signUp(UserModel usermodel) throws UserException {
+		if(usermodel==null) {
 			throw new UserException("SignUp details cannot be Null");
 		}
-		UserModel user=parser.parse(userRepo.findById(signUp.getUserName()).orElse(null));
-		if(user==null) {
-			throw new UserException("SignUp details Does not Exists");
+		List<User> users = userRepo.findAll();
+		for (User user : users) {
+		if (user.equals(usermodel)) {
+           throw new UserException("User Already Exisits");
+        }
 		}
-		if(user.getUserPassword().equals(signUp.getKey()) && signUp.getCreatePassword().equals(signUp.getConfirmPassword())) {
-			user.setUserPassword(signUp.getConfirmPassword());
-			user=parser.parse(userRepo.save(parser.parse(user)));
-		}
-		return user;
+		userRepo.save(parser.parse(usermodel));
+		return usermodel;
 	}
 
 

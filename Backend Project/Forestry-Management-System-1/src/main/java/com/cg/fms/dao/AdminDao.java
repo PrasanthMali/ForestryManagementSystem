@@ -8,4 +8,8 @@ import com.cg.fms.entity.Admin;
 @Repository
 public interface AdminDao extends JpaRepository<Admin, String>{
 
+	boolean existsByAdminName(String adminName);
+
+	Admin findByAdminName(String adminName);
+
 }

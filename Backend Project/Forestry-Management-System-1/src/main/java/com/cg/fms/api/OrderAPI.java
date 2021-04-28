@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,10 +14,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.cg.fms.exception.OrderException;
-import com.cg.fms.model.OrderModel;
-import com.cg.fms.service.IOrderService;
 
+import com.cg.fms.exception.ContractException;
+import com.cg.fms.exception.OrderException;
+import com.cg.fms.exception.ProductException;
+import com.cg.fms.model.ContractModel;
+import com.cg.fms.model.OrderModel;
+import com.cg.fms.model.ProductModel;
+import com.cg.fms.service.IOrderService;
+@CrossOrigin("*")
 @RestController
 @RequestMapping(path="/orders")
 public class OrderAPI {
@@ -69,6 +75,24 @@ public class OrderAPI {
 		return response;
 	}
 
+	@PostMapping("/addproduct/{orderNumber}")
+	public ResponseEntity<String> addProduct(@RequestBody ProductModel product,@PathVariable("orderNumber") String orderNumber) throws ProductException, OrderException{
+		ResponseEntity<String> response=null;
+		if(orderService.addProduct(product, orderNumber)) {
+			response = new ResponseEntity<>("Product is Added",HttpStatus.CREATED);
+		}else {
+			response= new ResponseEntity<>("Product is not Added",HttpStatus.NOT_ACCEPTABLE);
+		}
+		return response;
+	}
+	
+	@GetMapping("/getorderbycustomerid/{customerId}")
+	public ResponseEntity<List<OrderModel>> findAllByCustomerId(@PathVariable(name = "customerId") String customerId)throws ContractException {
+		ResponseEntity<OrderModel> responses = null;
+		List<OrderModel> orders = orderService.findAllByCustomerId(customerId);
 
+		return new ResponseEntity<>(orderService.findAllByCustomerId(customerId), HttpStatus.OK); 
+		
+	}
 
 }

@@ -1,5 +1,11 @@
 package com.cg.fms.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +30,7 @@ import com.cg.fms.model.LandModel;
 import com.cg.fms.model.OrderModel;
 import com.cg.fms.model.ProductModel;
 import com.cg.fms.model.SchedulerModel;
+import com.cg.fms.model.SignUp;
 import com.cg.fms.model.UserModel;
 
 @Service
@@ -83,51 +90,105 @@ public class EMParser {
 	}
 	
 	public CustomerModel parse(Customer source) {
+		List<String> epe = new ArrayList<>();
+		if(source.getContracts() != null) {
+		for(Contract l : source.getContracts()) {
+			epe.add(l.getContractNumber());
+			epe.add(l.getDeliveryDate());
+			epe.add(l.getDeliveryPlace());
+			epe.add(l.getQuantity());
+		}
+		}
+		List<String> op = new ArrayList<>();
+		if(source.getOrders() != null) {
+		for(Order ol : source.getOrders()) {
+			op.add(ol.getOrderNumber());
+			op.add(ol.getDeliveryDate());
+			op.add(ol.getDeliveryPlace());
+		}
+		}
+		CustomerModel cm = new CustomerModel (source.getCustomerId(),
+				source.getCustomerName(),source.getCustomerPassword(),source.getCustomerEmail(),
+				source.getCustomerAddress(),
+				source.getCustomerTown(),
+				source.getCustomerPostalCode(),
+				source.getCustomerContact());
+		cm.setContracts(epe);
+		cm.setOrders(op);
 		return source==null?null : 
-			new CustomerModel (source.getCustomerId(),
-					source.getCustomerName(),source.getCustomerPassword(),source.getCustomerEmail(),
-					source.getCustomerAddress(),
-					source.getCustomerTown(),
-					source.getCustomerPostalCode(),
-//					source.getContract().toString(),
-//					source.getOrder().toString(),
-					source.getCustomerContact());
+			cm;
 	}
 	
 	public Customer parse(CustomerModel source) {
+		List<Contract> epe = new ArrayList<>();
+		if(source.getContracts()!=null) {
+			for(String l: source.getContracts()) {
+				Contract c=contractRepo.findById(l).get();
+				epe.add(c);
+			}
+		}
+		List<Order> o = new ArrayList<>();
+		if(source.getOrders()!=null) {
+			for(String lo: source.getOrders()) {
+				Order oc=orderRepo.findById(lo).get();
+				o.add(oc);
+			}
+		}
+		Customer cc= new Customer (source.getCustomerId(),source.getCustomerName(),source.getCustomerPassword(),source.getCustomerEmail(),
+				source.getCustomerAddress(),
+				source.getCustomerTown(),
+				source.getCustomerPostalCode(),
+				source.getCustomerContact());
+		cc.setContracts(epe);
+		cc.setOrders(o);
 		return source==null?null : 
-			new Customer (source.getCustomerId(),source.getCustomerName(),source.getCustomerPassword(),source.getCustomerEmail(),
-					source.getCustomerAddress(),
-					source.getCustomerTown(),
-					source.getCustomerPostalCode(),
-					source.getCustomerContact());
+			cc;
 	}
 	
 	public OrderModel parse(Order source) {
+		List<String> epe = new ArrayList<>();
+		if(source.getProduct() != null) {
+		for(Product l : source.getProduct()) {
+			epe.add(l.getProductId());
+		}
+		}
+		OrderModel om=new OrderModel(source.getOrderNumber(),source.getDeliveryDate(),source.getDeliveryPlace(),
+				source.getQuantity(),source.getCustomer().getCustomerId());
+		om.setProduct(epe);
 		return source == null?null:
-			new OrderModel(source.getOrderNumber(),source.getDeliveryDate(),source.getDeliveryPlace(),
-					source.getQuantity(),source.getCustomer().getCustomerId());
+			om;
 	}
 	
 	public Order parse (OrderModel source) {
+		List<Product> epe = new ArrayList<>();
+		int qty=0;
+		if(source.getProduct()!=null) {
+			for(String l: source.getProduct()) {
+				Product p= productRepo.findById(l).get();
+				qty++;
+				epe.add(p);
+			}
+		}
+		Order o=new Order(source.getOrderNumber(),source.getDeliveryDate(),source.getDeliveryPlace(),
+				source.getQuantity(),
+				customerRepo.findById(source.getCustomerId()).orElse(null));
+		o.setProduct(epe);
 		return source == null?null:
-			new Order(source.getOrderNumber(),source.getDeliveryDate(),source.getDeliveryPlace(),
-					source.getQuantity(),
-					customerRepo.findById(source.getCustomerId()).orElse(null));
+			o;
 	}
 	
 	public ProductModel parse(Product source) {
+		OrderModel order = new OrderModel();
+		order.setQuantity(source.getProductQuantity());
 		return source == null?null:
-			new ProductModel(source.getProductId(),source.getProductName(),source.getProductDescription(),
-					source.getProductQuantity(),
-					source.getOrder().getOrderNumber());
+			new ProductModel(source.getProductId(),source.getProductName(),source.getProductDescription(),source.getProductPrice(),
+					source.getProductQuantity());
 	}
 	
 	public Product parse(ProductModel source) {
 		return source == null?null:
-			new Product(source.getProductId(),source.getProductName(),source.getProductDescription(),
-					source.getProductQuantity(),
-					orderRepo.findById(source.getOrderNumber()).orElse(null));
+			new Product(source.getProductId(),source.getProductName(),source.getProductDescription(),source.getProductPrice(),
+					source.getProductQuantity());
 	}
 	
 	public SchedulerModel parse(Scheduler source) {
@@ -167,4 +228,6 @@ public class EMParser {
 					source.getUserPassword(),
 					UserType.valueOf(source.getUserType()));
 	}
+
+	
 }

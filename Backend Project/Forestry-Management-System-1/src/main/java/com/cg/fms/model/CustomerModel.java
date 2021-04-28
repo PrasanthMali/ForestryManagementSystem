@@ -2,6 +2,8 @@ package com.cg.fms.model;
 
 
 
+import java.util.List;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -47,10 +49,10 @@ public class CustomerModel {
 	private String customerContact;
 
 	
-	private String contractNumber;
+	private List<String> contracts;
 
 	
-	private String orderNumber;
+	private List<String> orders;
 	
 	public CustomerModel() {
 		
@@ -142,28 +144,24 @@ public class CustomerModel {
 	public void setCustomerContact(String customerContact) {
 		this.customerContact = customerContact;
 	}
+	
+	
+	public List<String> getContracts() {
+		return contracts;
+	}
 
-//	public String getContractNumber() {
-//		return contractNumber;
-//	}
-//
-//	public void setContractNumber(String contractNumber) {
-//		this.contractNumber = contractNumber;
-//	}
-//
-//	public String getOrderNumber() {
-//		return orderNumber;
-//	}
-//
-//	public void setOrderNumber(String orderNumber) {
-//		this.orderNumber = orderNumber;
-//	}
-	
-	
-	
-	
+	public void setContracts(List<String> epe) {
+		this.contracts = epe;
+	}
 
-	
+	public List<String> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<String> op) {
+		this.orders = op;
+	}
+
 	@Override
 	public String toString() {
 		return "CustomerModel [customerId=" + customerId + ", customerName=" + customerName + ", customerPassword="

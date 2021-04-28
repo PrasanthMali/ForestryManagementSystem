@@ -50,9 +50,9 @@ public class ProductServiceTest {
 	@Test
 	@DisplayName("ProductServiceImpl :: Return Product Details when product Id is given")
 	void testGetById () throws ProductException {
-		Product testdata=new Product("1","timber wood","best timber wood","100",new Order());
+		Product testdata=new Product("1","timber wood","best timber wood",500.0, 100);
 		
-		ProductModel expected=new ProductModel("1","timber wood","best timber wood","100",new Order().getOrderNumber());
+		ProductModel expected=new ProductModel("1","timber wood","best timber wood",500.0,100);
 		
 		Mockito.when(productDao.existsById(testdata.getProductId())).thenReturn(true);
 		Mockito.when(productDao.findById(testdata.getProductId())).thenReturn(Optional.of(testdata));

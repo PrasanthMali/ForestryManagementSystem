@@ -1,5 +1,6 @@
 package com.cg.fms.model;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.OneToMany;
@@ -21,9 +22,10 @@ public class OrderModel {
 
 	@NotEmpty(message="quantity  cannot be empty")
 	@NotNull(message="quantity cannot be omitted")
-	private String quantity;
+	private int quantity;
 	
-
+	
+	private List<String> Product;
 	
 	private String customerId;
 	
@@ -35,7 +37,7 @@ public class OrderModel {
 	public OrderModel(String orderNumber,
 			@NotEmpty(message = "deliveryPlace  cannot be empty") @NotNull(message = "deliveryPlace cannot be omitted") String deliveryPlace,
 			@NotEmpty(message = "deliveryDate  cannot be empty") @NotNull(message = "deliveryDate cannot be omitted") String deliveryDate,
-			@NotEmpty(message = "quantity  cannot be empty") @NotNull(message = "quantity cannot be omitted") String quantity,
+			@NotEmpty(message = "quantity  cannot be empty") @NotNull(message = "quantity cannot be omitted") int quantity,
 			String customerId) {
 		super();
 		this.orderNumber = orderNumber;
@@ -69,15 +71,25 @@ public class OrderModel {
 		this.deliveryDate = deliveryDate;
 	}
 
-	public String getQuantity() {
+	public int getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(String quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
-	}
+	}	
+	
+	
 
 	
+	public List<String> getProduct() {
+		return Product;
+	}
+
+	public void setProduct(List<String> product) {
+		Product = product;
+	}
+
 	public String getCustomerId() {
 		return customerId;
 	}
@@ -90,11 +102,12 @@ public class OrderModel {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((Product == null) ? 0 : Product.hashCode());
 		result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
 		result = prime * result + ((deliveryDate == null) ? 0 : deliveryDate.hashCode());
 		result = prime * result + ((deliveryPlace == null) ? 0 : deliveryPlace.hashCode());
 		result = prime * result + ((orderNumber == null) ? 0 : orderNumber.hashCode());
-		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+		result = prime * result + quantity;
 		return result;
 	}
 
@@ -107,6 +120,11 @@ public class OrderModel {
 		if (getClass() != obj.getClass())
 			return false;
 		OrderModel other = (OrderModel) obj;
+		if (Product == null) {
+			if (other.Product != null)
+				return false;
+		} else if (!Product.equals(other.Product))
+			return false;
 		if (customerId == null) {
 			if (other.customerId != null)
 				return false;
@@ -127,10 +145,7 @@ public class OrderModel {
 				return false;
 		} else if (!orderNumber.equals(other.orderNumber))
 			return false;
-		if (quantity == null) {
-			if (other.quantity != null)
-				return false;
-		} else if (!quantity.equals(other.quantity))
+		if (quantity != other.quantity)
 			return false;
 		return true;
 	}
@@ -138,12 +153,8 @@ public class OrderModel {
 	@Override
 	public String toString() {
 		return "OrderModel [orderNumber=" + orderNumber + ", deliveryPlace=" + deliveryPlace + ", deliveryDate="
-				+ deliveryDate + ", quantity=" + quantity + ", customerId="
-				+ customerId + "]";
+				+ deliveryDate + ", quantity=" + quantity + ", Product=" + Product + ", customerId=" + customerId + "]";
 	}
-	
-	
-	
 
 	
 	}

@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.cg.fms.exception.AdminException;
+import com.cg.fms.exception.UserException;
 import com.cg.fms.model.AdminModel;
+import com.cg.fms.model.UserModel;
 import com.cg.fms.service.IAdminService;
 
 @CrossOrigin(origins = "*")
@@ -36,6 +38,23 @@ public class AdminAPI {
 		return new ResponseEntity<>(adminModel, HttpStatus.CREATED);
 	}
 	
+	@PostMapping("/signIn")
+	public ResponseEntity<AdminModel> signIn(@RequestBody AdminModel adminModel) throws AdminException{
+		ResponseEntity<AdminModel> response1=null;
+//		AdminModel admin= adminService.findByAdminName(adminModel.getAdminName());
+		if(adminService.existsByAdminName(adminModel.getAdminName())) {
+			if(adminService.signIn(adminModel)) {
+				response1=new ResponseEntity<>(adminModel,HttpStatus.ACCEPTED);
+			}else {
+				response1=new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}		
+		}else {
+			response1=new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return response1;
+	
+	}
+	
 	/* Update the Admin details */
 	@PutMapping("/updateadmin/{adminId}")
 	public ResponseEntity<AdminModel> updateAdmin(@RequestBody AdminModel admin,@PathVariable("adminId")String adminId) throws AdminException{
@@ -50,10 +69,17 @@ public class AdminAPI {
 	}
 	
 	/* Display the particular Admin details present in the database using AdminId*/
-	@GetMapping("/getadmin/{adminId}")
-	public ResponseEntity<AdminModel> getByAdmin(@PathVariable("adminId") String adminId) throws AdminException{
+	@GetMapping("/getAdminByAdminName/{adminName}")
+	public ResponseEntity<AdminModel> getAdminByAdminName(@PathVariable("adminName") String adminName) throws AdminException{
+		return ResponseEntity.ok(adminService.getAdminByAdminName(adminName));
+	}
+	
+	@GetMapping("/getAdmin/{adminId}")
+	public ResponseEntity<AdminModel> getAdmin(@PathVariable("adminId") String adminId) throws AdminException{
 		return ResponseEntity.ok(adminService.getAdmin(adminId));
 	}
+	
+	
 	
 	/* Delete the particular Admin details present in the database using LandId*/
 	@DeleteMapping("/deleteadmin/{adminId}")
@@ -65,6 +91,18 @@ public class AdminAPI {
 		} else {
 			adminService.deleteAdmin(adminId);
 			response = new ResponseEntity<>("Admin is deleted successsfully", HttpStatus.OK);
+		}
+		return response;
+	}
+	
+	@PostMapping("/signUp")
+	public ResponseEntity<AdminModel> signUp(@RequestBody AdminModel signUp ) throws AdminException {
+		ResponseEntity<AdminModel> response=null;
+		if(signUp !=null) {
+			signUp=adminService.signUp(signUp);
+			response=new ResponseEntity<>(signUp,HttpStatus.ACCEPTED);
+		}else {
+			response=new ResponseEntity<>(HttpStatus.NO_CONTENT);	
 		}
 		return response;
 	}

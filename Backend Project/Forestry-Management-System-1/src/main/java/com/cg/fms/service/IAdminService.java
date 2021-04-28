@@ -21,6 +21,18 @@ public interface IAdminService {
 
 	AdminModel findById(String adminId) throws AdminException;
 
+	boolean signIn(AdminModel admin) throws AdminException;
+
+	boolean signOut(AdminModel admin) throws AdminException;
+
+	AdminModel signUp(AdminModel admin) throws AdminException;
+
+	AdminModel getAdminByAdminName(String adminName) throws AdminException;
+
+	public boolean existsByAdminName(String adminName);
+
+	AdminModel findByAdminName(String adminName) throws AdminException;
+
 
 
 

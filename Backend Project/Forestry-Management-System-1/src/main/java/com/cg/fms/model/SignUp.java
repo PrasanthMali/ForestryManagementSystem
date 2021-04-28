@@ -26,25 +26,30 @@ public class SignUp {
 	@Pattern(regexp="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&()])(?=\\S+$).{8,30}$")
 	private String confirmPassword;
 	
+	@NotNull(message="user type cannot be null")	
+	@NotBlank(message="user type cannot be blank")
+	private String userType;
 	
+
+
+
 	public SignUp() {
 		
 	}
-
-
+	
 	public SignUp(
 			@NotNull(message = "user id cannot be null") @NotBlank(message = "user id cannot be blank") @Pattern(regexp = "^[A-Za-z][A-Za-z0-9]{3,20}$") String userName,
 			@NotNull(message = "Key cannot be null") @NotBlank(message = "Key cannot be blank") @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{4,10}$") String key,
 			@NotNull(message = "Create password cannot be null") @NotBlank(message = "Create password cannot be blank") @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&()])(?=\\S+$).{8,30}$") String createPassword,
-			@NotNull(message = "confirm password cannot be null") @NotBlank(message = "confirm password cannot be blank") @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&()])(?=\\S+$).{8,30}$") String confirmPassword) {
+			@NotNull(message = "confirm password cannot be null") @NotBlank(message = "confirm password cannot be blank") @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&()])(?=\\S+$).{8,30}$") String confirmPassword,
+			@NotNull(message = "user type cannot be null") @NotBlank(message = "user type cannot be blank") String userType) {
 		super();
 		this.userName = userName;
 		this.key = key;
 		this.createPassword = createPassword;
 		this.confirmPassword = confirmPassword;
+		this.userType = userType;
 	}
-	
-	
 
 
 	public String getUserName() {
@@ -85,7 +90,17 @@ public class SignUp {
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
+	
+	
 
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
 
 	@Override
 	public int hashCode() {
@@ -95,9 +110,9 @@ public class SignUp {
 		result = prime * result + ((createPassword == null) ? 0 : createPassword.hashCode());
 		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+		result = prime * result + ((userType == null) ? 0 : userType.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -128,19 +143,19 @@ public class SignUp {
 				return false;
 		} else if (!userName.equals(other.userName))
 			return false;
+		if (userType == null) {
+			if (other.userType != null)
+				return false;
+		} else if (!userType.equals(other.userType))
+			return false;
 		return true;
 	}
-
 
 	@Override
 	public String toString() {
 		return "SignUp [userName=" + userName + ", key=" + key + ", createPassword=" + createPassword
-				+ ", confirmPassword=" + confirmPassword + "]";
+				+ ", confirmPassword=" + confirmPassword + ", userType=" + userType + "]";
 	}
 
-
 	
-	
-	
-
 }

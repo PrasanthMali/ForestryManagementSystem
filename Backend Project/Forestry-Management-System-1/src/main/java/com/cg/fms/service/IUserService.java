@@ -18,7 +18,7 @@ public interface IUserService {
 	List<UserModel> getAll();
 	boolean existsById(String userName);
 	boolean changePassword(ChangePassword changePassword) throws UserException;
-	UserModel signUp(SignUp signUp) throws UserException;
+	UserModel signUp(UserModel usermodel) throws UserException;
 	UserModel findById(String userName);
 	List<UserModel> findAll();
 	

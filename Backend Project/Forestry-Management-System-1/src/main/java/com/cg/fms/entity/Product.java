@@ -1,14 +1,12 @@
 package com.cg.fms.entity;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -23,13 +21,15 @@ public class Product{
 
 	@Column(name="product_description")
 	private String productDescription;
+	
+	@Column(name="product_price")
+	private Double productPrice;
 
 	@Column(name="product_quantity")
-	private String productQuantity;
+	private int productQuantity;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="order_number")
-	private Order order;
+	@ManyToMany(mappedBy = "product")
+	private List<Order> order = new ArrayList<Order>();
 
 	
 	public Product() {
@@ -37,14 +37,14 @@ public class Product{
 	}
 
 
-	public Product(String productId, String productName, String productDescription, String productQuantity,
-			Order order) {
+	public Product(String productId, String productName, String productDescription, Double productPrice,
+			int productQuantity) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.productDescription = productDescription;
+		this.productPrice = productPrice;
 		this.productQuantity = productQuantity;
-		this.order = order;
 	}
 
 
@@ -78,22 +78,32 @@ public class Product{
 	}
 
 
-	public String getProductQuantity() {
+	public Double getProductPrice() {
+		return productPrice;
+	}
+
+
+	public void setProductPrice(Double productPrice) {
+		this.productPrice = productPrice;
+	}
+
+
+	public int getProductQuantity() {
 		return productQuantity;
 	}
 
 
-	public void setProductQuantity(String productQuantity) {
+	public void setProductQuantity(int productQuantity) {
 		this.productQuantity = productQuantity;
 	}
 
 
-	public Order getOrder() {
+	public List<Order> getOrder() {
 		return order;
 	}
 
 
-	public void setOrder(Order order) {
+	public void setOrder(List<Order> order) {
 		this.order = order;
 	}
 
@@ -106,7 +116,8 @@ public class Product{
 		result = prime * result + ((productDescription == null) ? 0 : productDescription.hashCode());
 		result = prime * result + ((productId == null) ? 0 : productId.hashCode());
 		result = prime * result + ((productName == null) ? 0 : productName.hashCode());
-		result = prime * result + ((productQuantity == null) ? 0 : productQuantity.hashCode());
+		result = prime * result + ((productPrice == null) ? 0 : productPrice.hashCode());
+		result = prime * result + productQuantity;
 		return result;
 	}
 
@@ -140,10 +151,12 @@ public class Product{
 				return false;
 		} else if (!productName.equals(other.productName))
 			return false;
-		if (productQuantity == null) {
-			if (other.productQuantity != null)
+		if (productPrice == null) {
+			if (other.productPrice != null)
 				return false;
-		} else if (!productQuantity.equals(other.productQuantity))
+		} else if (!productPrice.equals(other.productPrice))
+			return false;
+		if (productQuantity != other.productQuantity)
 			return false;
 		return true;
 	}
@@ -152,11 +165,12 @@ public class Product{
 	@Override
 	public String toString() {
 		return "Product [productId=" + productId + ", productName=" + productName + ", productDescription="
-				+ productDescription + ", productQuantity=" + productQuantity + ", order=" + order + "]";
+				+ productDescription + ", productPrice=" + productPrice + ", productQuantity=" + productQuantity
+				+ ", order=" + order + "]";
 	}
 
-	
 
 	
-	
-}
+
+
+	}

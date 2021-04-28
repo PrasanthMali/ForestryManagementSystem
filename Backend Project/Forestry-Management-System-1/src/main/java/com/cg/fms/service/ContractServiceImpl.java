@@ -1,6 +1,7 @@
 package com.cg.fms.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cg.fms.dao.ContractDao;
 import com.cg.fms.dao.CustomerDao;
+import com.cg.fms.entity.Contract;
 import com.cg.fms.entity.Customer;
 import com.cg.fms.exception.AdminException;
 import com.cg.fms.exception.ContractException;
@@ -67,7 +69,8 @@ public class ContractServiceImpl implements IContractService{
 			throw new ContractException("No Contract found for the given Id");
 		return parser.parse(contractRepo.findById(contractNumber).get());
 	}
-
+	
+	
 	
 	
 	/* add the details of contract  */
@@ -87,7 +90,40 @@ public class ContractServiceImpl implements IContractService{
 		return contract;
 	}
 	
-	
+	@Override
+	public ContractModel addByCustomer(ContractModel contract, String customerId) throws ContractException, CustomerException {
+		if(customerId==null) {
+			throw new CustomerException("Customer Id can not be null");
+		}
+		Customer customer=customerRepo.findById(customerId).orElse(null);
+		if(customer==null) {
+			throw new CustomerException("Customer does not exists");
+		}
+		Set<ContractModel> accounts=customer.getContracts().stream().map(parser::parse).collect(Collectors.toSet());
+		if(accounts.contains(contract)) {
+			throw new ContractException(contract.getContractNumber()+" is already Exists");
+		}else {
+			contract=parser.parse(contractRepo.save(parser.parse(contract)));
+			customer.getContracts().add(parser.parse(contract));
+			customer.setContracts(customer.getContracts());
+			customerRepo.save(customer);
+			
+		}
+		return contract;
+	}
+
+//	@Override
+//	public Set<ContractModel> findAllByCustomerId(String customerId) throws CustomerException {
+//		Customer customer=customerRepo.findById(customerId).orElse(null);
+//		if(customerId==null) {
+//			throw new CustomerException("Customer Id should not be null");
+//		}else if(customer==null) {
+//			throw new CustomerException("No Customer Exists");
+//		}else if(customer.getContracts().isEmpty()) {
+//			throw new CustomerException("No Accounts Exists");
+//		}
+//		return customer.getContracts().stream().map(parser::parse).collect(Collectors.toSet());
+//	}
 	/* update  details of contract by contractnumber */
 	@Override
 	public ContractModel updateContract(ContractModel contractModel) throws ContractException {
@@ -139,6 +175,17 @@ public class ContractServiceImpl implements IContractService{
 		}
 		return contractRepo.existsById(contractNumber);
 	}
+
+	@Override
+	public List<ContractModel> findAllByCustomerId(String customerId){
+		Optional<Customer> customerOptional = customerRepo.findById(customerId);	
+		List<Contract> contracts = customerOptional.get().getContracts();	
+		return contracts.stream().map(parser::parse).collect(Collectors.toList());
+	}
+	
+
+
+//	
 
 
 

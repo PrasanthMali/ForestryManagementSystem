@@ -6,8 +6,14 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cg.fms.dao.AdminDao;
+import com.cg.fms.entity.Admin;
+import com.cg.fms.entity.User;
 import com.cg.fms.exception.AdminException;
+import com.cg.fms.exception.CustomerException;
+import com.cg.fms.exception.UserException;
 import com.cg.fms.model.AdminModel;
+import com.cg.fms.model.CustomerModel;
+import com.cg.fms.model.UserModel;
 
 @Service
 public class AdminServiceImpl implements IAdminService {
@@ -56,6 +62,13 @@ public class AdminServiceImpl implements IAdminService {
 
 
 	@Override
+	public AdminModel getAdminByAdminName(String adminName) throws AdminException {
+		if (!adminRepo.existsByAdminName(adminName))
+			throw new AdminException("No Admin found for the given Name");
+		return parser.parse(adminRepo.findByAdminName(adminName));
+	}
+	
+	@Override
 	public AdminModel getAdmin(String adminId) throws AdminException {
 		if (!adminRepo.existsById(adminId))
 			throw new AdminException("No Admin found for the given Id");
@@ -78,7 +91,23 @@ public class AdminServiceImpl implements IAdminService {
 		return adminmodel;
 	}
 
-
+	@Override
+	public boolean signIn(AdminModel admin) throws AdminException {
+		if(admin==null) {
+			throw new AdminException("SignIn details Cannot be Null");
+		}
+		Admin adminDetails=adminRepo.findByAdminName(admin.getAdminName());
+		if(adminDetails==null) {
+			throw new AdminException("Admin Details doesnot Exists");
+		}
+		return adminDetails.getAdminPassword().equals(admin.getAdminPassword());
+	}
+	
+	@Override
+	public boolean signOut(AdminModel admin) throws AdminException {
+		
+		return true;
+	}
 
 	@Override
 	public void deleteAdmin(String adminId) {
@@ -108,6 +137,14 @@ public class AdminServiceImpl implements IAdminService {
 		}
 		return adminRepo.existsById(adminId);
 	}
+	
+	@Override
+	public boolean existsByAdminName(String adminName) throws AdminException{
+		if(adminName == null) {
+			throw new AdminException("Name cannot be null");
+		}
+		return adminRepo.existsByAdminName(adminName);
+	}
 
 	@Override
 	public AdminModel findById(String adminId) throws AdminException {
@@ -118,7 +155,33 @@ public class AdminServiceImpl implements IAdminService {
 		}
 		return parser.parse(adminRepo.findById(adminId).orElse(null));
 	}
+	
+	@Override
+	public AdminModel findByAdminName(String adminName) throws AdminException {
+		if(adminName==null) {
+			throw new AdminException("CustomerId can not be null");
+		}else if(!adminRepo.existsById(adminName)) {
+			throw new AdminException(adminName+" is not Exists");
+		}
+		return parser.parse(adminRepo.findByAdminName(adminName));
+	}
 
+	@Override
+	public AdminModel signUp(AdminModel admin) throws AdminException {
+		if(admin==null) {
+			throw new AdminException("SignUp details cannot be Null");
+		}
+		List<Admin> admins = adminRepo.findAll();
+		for (Admin user : admins) {
+		if (user.equals(admin)) {
+           throw new AdminException("Admin Already Exisits");
+        }
+		}
+		adminRepo.save(parser.parse(admin));
+		return admin;
+	}
+
+	
 
 
 

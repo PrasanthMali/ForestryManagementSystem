@@ -39,18 +39,19 @@ public class UserAPI {
 	}
 	
 	@PostMapping("/signIn")
-	public ResponseEntity<String> signIn(@RequestBody UserModel user) throws UserException{
-		ResponseEntity<String> response=null;
+	public ResponseEntity<UserModel> signIn(@RequestBody UserModel user) throws UserException{
+		ResponseEntity<UserModel> response1=null;
+
 		if(userService.existsById(user.getUserName())) {
 			if(userService.signIn(user)) {
-				response=new ResponseEntity<>("Signed In As "+user.getUserName(),HttpStatus.ACCEPTED);
+				response1=new ResponseEntity<>(user,HttpStatus.ACCEPTED);
 			}else {
-				response=new ResponseEntity<>("User name and password did not match",HttpStatus.UNAUTHORIZED);
+				response1=new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 			}		
 		}else {
-			response=new ResponseEntity<>("User with "+user.getUserName()+" Does not exists",HttpStatus.NOT_FOUND);
+			response1=new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return response;
+		return response1;
 	
 	}
 	
@@ -95,13 +96,12 @@ public class UserAPI {
 		return response;
 	}
 	
-	@PutMapping("/signUp")
-	public ResponseEntity<UserModel> signUp(@RequestBody SignUp signUp ) throws UserException {
+	@PostMapping("/signUp")
+	public ResponseEntity<UserModel> signUp(@RequestBody UserModel signUp ) throws UserException {
 		ResponseEntity<UserModel> response=null;
-		UserModel user=userService.findById(signUp.getUserName());
-		if(user!=null) {
-			user=userService.signUp(signUp);
-			response=new ResponseEntity<>(user,HttpStatus.ACCEPTED);
+		if(signUp !=null) {
+			signUp=userService.signUp(signUp);
+			response=new ResponseEntity<>(signUp,HttpStatus.ACCEPTED);
 		}else {
 			response=new ResponseEntity<>(HttpStatus.NO_CONTENT);	
 		}

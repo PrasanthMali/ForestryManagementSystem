@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cg.fms.entity.Customer;
 import com.cg.fms.exception.ContractException;
 import com.cg.fms.exception.CustomerException;
+import com.cg.fms.exception.UserException;
+import com.cg.fms.model.ContractModel;
 import com.cg.fms.model.CustomerModel;
+import com.cg.fms.model.UserModel;
 import com.cg.fms.service.ICustomerService;
 
 @CrossOrigin("*")
@@ -30,9 +33,32 @@ public class CustomerAPI {
 	private ICustomerService customerService;
 	
 	/* Display the particular Customer details present in the database using customerId*/
+	@GetMapping("/getcustomerByCustomerName/{customerName}")
+	public ResponseEntity<CustomerModel> getcustomerByCustomerName(@PathVariable("customerName") String customerName) throws  CustomerException{
+		return ResponseEntity.ok(customerService.getCustomerByCustomerName(customerName));
+	}
+	
 	@GetMapping("/getcustomer/{customerId}")
 	public ResponseEntity<CustomerModel> getCustomer(@PathVariable("customerId") String customerId) throws  CustomerException{
 		return ResponseEntity.ok(customerService.getCustomer(customerId));
+	}
+	
+	@GetMapping("/getcontracts/{customerId}")
+	public ResponseEntity<List<ContractModel>> getContracts(@PathVariable("customerId") String customerId) throws  CustomerException{
+		return ResponseEntity.ok(customerService.getContracts(customerId));
+	}
+	
+	
+	
+	@PostMapping("/addcontract/{customerId}")
+	public ResponseEntity<String> addcontract(@RequestBody ContractModel contract,@PathVariable("customerId") String customerId) throws ContractException, CustomerException{
+		ResponseEntity<String> response=null;
+		if(customerService.addContract(contract, customerId)) {
+			response = new ResponseEntity<>("Contract is Added",HttpStatus.CREATED);
+		}else {
+			response= new ResponseEntity<>("Contract is not Added",HttpStatus.NOT_ACCEPTABLE);
+		}
+		return response;
 	}
 	
 	/* Display all the Customers details present in the database */
@@ -46,6 +72,23 @@ public class CustomerAPI {
 	public ResponseEntity<CustomerModel> createAdmin(@RequestBody CustomerModel customer) throws CustomerException {
 		customer = customerService.addCustomer(customer);
 		return new ResponseEntity<>(customer, HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/signIn")
+	public ResponseEntity<CustomerModel> signIn(@RequestBody CustomerModel customer) throws CustomerException{
+		ResponseEntity<CustomerModel> response1=null;
+
+		if(customerService.existsByCustomerName(customer.getCustomerName())) {
+			if(customerService.signIn(customer)) {
+				response1=new ResponseEntity<>(customer,HttpStatus.ACCEPTED);
+			}else {
+				response1=new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}		
+		}else {
+			response1=new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return response1;
+	
 	}
 	
 	/* Update the Customer details */
@@ -65,6 +108,18 @@ public class CustomerAPI {
 		} else {
 			customerService.deleteCustomer(customerId);
 			response = new ResponseEntity<>("Customer is deleted successsfully", HttpStatus.OK);
+		}
+		return response;
+	}
+	
+	@PostMapping("/signUp")
+	public ResponseEntity<CustomerModel> signUp(@RequestBody CustomerModel signUp ) throws CustomerException {
+		ResponseEntity<CustomerModel> response=null;
+		if(signUp !=null) {
+			signUp=customerService.signUp(signUp);
+			response=new ResponseEntity<>(signUp,HttpStatus.ACCEPTED);
+		}else {
+			response=new ResponseEntity<>(HttpStatus.NO_CONTENT);	
 		}
 		return response;
 	}

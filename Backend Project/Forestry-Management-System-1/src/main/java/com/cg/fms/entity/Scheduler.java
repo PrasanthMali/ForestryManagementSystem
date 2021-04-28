@@ -2,6 +2,7 @@ package com.cg.fms.entity;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,7 +29,7 @@ public class Scheduler {
 	private String truckNumber;
 	
 	
-	@OneToMany(mappedBy="scheduler")
+	@OneToMany(mappedBy="scheduler",cascade = CascadeType.ALL)
 	private Set<Contract> contracts;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

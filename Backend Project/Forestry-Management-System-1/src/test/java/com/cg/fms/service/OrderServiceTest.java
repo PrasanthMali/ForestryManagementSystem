@@ -53,9 +53,9 @@ public class OrderServiceTest {
 	@Test
 	@DisplayName("OrderServiceImpl :: Get Order Details when Order Number is Given ")
 	void testGetById () throws OrderException {
-		Order testdata=new Order("1","2020-11-11","Chennai","100",new Customer());
+		Order testdata=new Order("1","2020-11-11","Chennai",100,new Customer());
 		
-		OrderModel expected=new OrderModel("1","Chennai","2020-11-11","100",new Customer().getCustomerId());
+		OrderModel expected=new OrderModel("1","Chennai","2020-11-11",100,new Customer().getCustomerId());
 		
 		
 		Mockito.when(orderDao.findById(testdata.getOrderNumber())).thenReturn(Optional.of(testdata));

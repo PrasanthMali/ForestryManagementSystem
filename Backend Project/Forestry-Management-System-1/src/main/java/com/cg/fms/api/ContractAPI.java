@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cg.fms.exception.ContractException;
 import com.cg.fms.model.ContractModel;
 import com.cg.fms.service.IContractService;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path="/contracts")
 public class ContractAPI {
@@ -26,7 +27,7 @@ public class ContractAPI {
 	
 
 	/* Display the particular Contract details present in the database using ContractNumber*/
-	@GetMapping("/getContarctByContractNumber/{contractNumber}")
+	@GetMapping("/getContractByContractNumber/{contractNumber}")
 	public ResponseEntity<ContractModel> getContarctByContractNumber(@PathVariable("contractNumber") String contractNumber) throws  ContractException{
 		return ResponseEntity.ok(contractService.getContarctByContractNumber(contractNumber));
 	}
@@ -35,6 +36,15 @@ public class ContractAPI {
 	@GetMapping("/getallContracts")
 	public ResponseEntity<List<ContractModel>> getAll() throws ContractException{
 		return ResponseEntity.ok(contractService.getAllContracts());
+	}
+	
+	@GetMapping("/getcontractbycustomerid/{customerId}")
+	public ResponseEntity<List<ContractModel>> findAllByCustomerId(@PathVariable(name = "customerId") String customerId)throws ContractException {
+		ResponseEntity<ContractModel> response = null;
+		List<ContractModel> order = contractService.findAllByCustomerId(customerId);
+
+		return new ResponseEntity<>(contractService.findAllByCustomerId(customerId), HttpStatus.OK); 
+		
 	}
 	
 	/* Adding the Contract details into the database */

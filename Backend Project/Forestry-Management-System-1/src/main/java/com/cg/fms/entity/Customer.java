@@ -1,12 +1,17 @@
 package com.cg.fms.entity;
 
-import java.util.Set;
-
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name="customers")
@@ -36,11 +41,13 @@ public class Customer {
 	@Column(name="customer_contact")
 	private String customerContact;
 
-	@OneToMany(mappedBy="customer")
-	private Set<Contract> contract;
+	 @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	 @Fetch(FetchMode.SELECT)
+	    private List<Contract> contracts=new ArrayList<Contract>();
 
-	@OneToMany(mappedBy="customer")
-	private Set<Order> order;
+	@OneToMany(mappedBy="customer1",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	private List<Order> orders;
 	
 	public Customer() {
 		
@@ -58,6 +65,16 @@ public class Customer {
 		this.customerPostalCode = customerPostalCode;
 		this.customerContact=customerContact;
 	}
+	
+	 public void addContranct(Contract contract) {
+	        contracts.add(contract);
+	        contract.setCustomer(this);
+	    }
+
+	    public void removeContranct(Contract contract) {
+	        contracts.remove(contract);
+	        contract.setCustomer(null);
+	    }
 
 	public String getCustomerId() {
 		return customerId;
@@ -122,12 +139,30 @@ public class Customer {
 	public void setCustomerContact(String customerContact) {
 		this.customerContact = customerContact;
 	}
+	
+	
+
+	public List<Contract> getContracts() {
+		return contracts;
+	}
+
+	public void setContracts(List<Contract> contracts) {
+		this.contracts = contracts;
+	}
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((contract == null) ? 0 : contract.hashCode());
+		result = prime * result + ((contracts == null) ? 0 : contracts.hashCode());
 		result = prime * result + ((customerAddress == null) ? 0 : customerAddress.hashCode());
 		result = prime * result + ((customerContact == null) ? 0 : customerContact.hashCode());
 		result = prime * result + ((customerEmail == null) ? 0 : customerEmail.hashCode());
@@ -136,7 +171,7 @@ public class Customer {
 		result = prime * result + ((customerPassword == null) ? 0 : customerPassword.hashCode());
 		result = prime * result + ((customerPostalCode == null) ? 0 : customerPostalCode.hashCode());
 		result = prime * result + ((customerTown == null) ? 0 : customerTown.hashCode());
-		result = prime * result + ((order == null) ? 0 : order.hashCode());
+		result = prime * result + ((orders == null) ? 0 : orders.hashCode());
 		return result;
 	}
 
@@ -149,10 +184,10 @@ public class Customer {
 		if (getClass() != obj.getClass())
 			return false;
 		Customer other = (Customer) obj;
-		if (contract == null) {
-			if (other.contract != null)
+		if (contracts == null) {
+			if (other.contracts != null)
 				return false;
-		} else if (!contract.equals(other.contract))
+		} else if (!contracts.equals(other.contracts))
 			return false;
 		if (customerAddress == null) {
 			if (other.customerAddress != null)
@@ -194,10 +229,10 @@ public class Customer {
 				return false;
 		} else if (!customerTown.equals(other.customerTown))
 			return false;
-		if (order == null) {
-			if (other.order != null)
+		if (orders == null) {
+			if (other.orders != null)
 				return false;
-		} else if (!order.equals(other.order))
+		} else if (!orders.equals(other.orders))
 			return false;
 		return true;
 	}
@@ -207,7 +242,7 @@ public class Customer {
 		return "Customer [customerId=" + customerId + ", customerName=" + customerName + ", customerPassword="
 				+ customerPassword + ", customerEmail=" + customerEmail + ", customerAddress=" + customerAddress
 				+ ", customerTown=" + customerTown + ", customerPostalCode=" + customerPostalCode + ", customerContact="
-				+ customerContact + "]";
+				+ customerContact + ", contracts=" + contracts + ", orders=" + orders + "]";
 	}
 
 	
